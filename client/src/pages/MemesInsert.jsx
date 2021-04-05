@@ -42,6 +42,7 @@ class MemesInsert extends Component{
         this.state = {
             name: '',
             description: '',
+            file: '',
         }
     }
 
@@ -54,17 +55,34 @@ class MemesInsert extends Component{
         const description = event.target.value
         this.setState({ description })
     }
+    
+    handleChangeInputFile = async event => {
+        let file = event.target.files[0]
+
+        await encodeImageFileAsURL(file).then(response => {
+            file = response
+        })
+
+        this.setState({ file })
+    }
 
     handleIncludeMeme = async () => {
-        const { name, description } = this.state
-        const payload = { name, description }
+        const { name, description, file } = this.state
+        const payload = { name, description, file }
 
         await api.insertMeme(payload).then(res => {
             window.alert(`Meme inserted successfully`)
             this.setState({
                 name: '',
                 description: '',
+                file: '',
             })
+        }).catch(error => {
+            if (!error.response) {
+                console.log('Error: Network Error')
+            } else {
+                console.log(error.response.data.message)
+            }
         })
     }
 
@@ -72,7 +90,7 @@ class MemesInsert extends Component{
         const { name, description } = this.state
         return(
             <Wrapper>
-                <Title>Create Memes</Title>
+                <Title>Add</Title>
 
                 <Label>Name: </Label>
                 <InputText
@@ -87,12 +105,28 @@ class MemesInsert extends Component{
                     value={description}
                     onChange={this.handleChangeInputDescription}
                 />
+                
+                <Label>File: </Label>
+                <InputText
+                    type="file"
+                    onChange={this.handleChangeInputFile}
+                />
 
                 <Button onClick={this.handleIncludeMeme}>Add Meme</Button>
                 <CancelButton href={'/memes/list'}>Cancel</CancelButton>
             </Wrapper>
         )
     }
+}
+
+var encodeImageFileAsURL = function(file){
+    return new Promise((resolve, reject) => {
+        var reader = new FileReader()
+        reader.onloadend = function() {
+            resolve(reader.result)
+        }
+        reader.readAsDataURL(file)
+    })
 }
 
 export default MemesInsert

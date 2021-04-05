@@ -1,4 +1,3 @@
-//const { monitorEventLoopDelay } = require('node:perf_hooks')
 const Meme = require('../models/meme-model')
 
 createMeme = (req, res) => {
@@ -23,13 +22,13 @@ createMeme = (req, res) => {
             return res.status(201).json({
                 success: true,
                 id: meme._id,
-                message: 'Meme created!',
+                message: 'Meme added!',
             })
         })
         .catch(error => {
             return res.status(400).json({
                 error,
-                message: 'Meme not created!',
+                message: 'Meme was not added!',
             })
         })
 }
@@ -53,6 +52,7 @@ updateMeme = async(req, res) => {
         }
         meme.name = body.name
         meme.description = body.description
+        meme.file = body.file
         meme
             .save()
             .then(() => {

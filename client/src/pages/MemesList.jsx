@@ -93,6 +93,20 @@ class MemesList extends Component {
                 filterable: true,
             },
             {
+                Header: 'File',
+                accessor: 'file',
+                Cell: function(props){
+                    return(
+                        <img
+                            alt=""
+                            src={props.original.file}
+                            width="100px"
+                            height="auto"
+                        ></img>
+                    )
+                }
+            },
+            {
                 Header: '',
                 accessor: '',
                 Cell: function(props) {
@@ -124,13 +138,6 @@ class MemesList extends Component {
         return (
             <Wrapper>
                 {showTable && (
-                    /*
-                    <Table
-                        columns={columns}
-                        data={memes}
-                        propertyAsKey='name' 
-                    />
-                    */
                     <ReactTable
                         data={memes}
                         columns={columns}

@@ -13,11 +13,7 @@ function App(){
         <Switch>
             <Route path="/memes/list" exact component={MemesList}/>
             <Route path="/memes/create" exact component={MemesInsert}/>
-            <Route
-                path="memes/update/:id"
-                exact
-                component={MemesUpdate}
-            />
+            <Route path="/memes/update/:id" exact component={MemesUpdate}/>
         </Switch>
     </Router>
   )
