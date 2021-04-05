@@ -42,6 +42,7 @@ class MemesInsert extends Component{
         this.state = {
             name: '',
             description: '',
+            filename: '',
             file: '',
         }
     }
@@ -64,19 +65,25 @@ class MemesInsert extends Component{
         })
 
         this.setState({ file })
+
+        const filename = event.target.value.substring(12, event.target.value.length-4)
+        this.setState({ filename })
     }
 
     handleIncludeMeme = async () => {
-        const { name, description, file } = this.state
-        const payload = { name, description, file }
+        const { name, description, filename, file } = this.state
+        const payload = { name, description, filename, file }
 
         await api.insertMeme(payload).then(res => {
             window.alert(`Meme inserted successfully`)
             this.setState({
                 name: '',
                 description: '',
+                filename: '',
                 file: '',
             })
+
+            window.location.href = "/memes/list"
         }).catch(error => {
             if (!error.response) {
                 console.log('Error: Network Error')
@@ -87,7 +94,7 @@ class MemesInsert extends Component{
     }
 
     render(){
-        const { name, description } = this.state
+        const { name, description, filename } = this.state
         return(
             <Wrapper>
                 <Title>Add</Title>
@@ -105,12 +112,15 @@ class MemesInsert extends Component{
                     value={description}
                     onChange={this.handleChangeInputDescription}
                 />
-                
-                <Label>File: </Label>
-                <InputText
+
+                <br/>
+                <Label>File: {filename}</Label>
+                <br/>
+                <input
                     type="file"
                     onChange={this.handleChangeInputFile}
                 />
+                <br/>
 
                 <Button onClick={this.handleIncludeMeme}>Add Meme</Button>
                 <CancelButton href={'/memes/list'}>Cancel</CancelButton>

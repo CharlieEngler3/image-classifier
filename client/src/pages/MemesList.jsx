@@ -93,16 +93,22 @@ class MemesList extends Component {
                 filterable: true,
             },
             {
+                Header: 'File Name',
+                accessor: 'filename',
+            },
+            {
                 Header: 'File',
                 accessor: 'file',
                 Cell: function(props){
                     return(
-                        <img
-                            alt=""
-                            src={props.original.file}
-                            width="100px"
-                            height="auto"
-                        ></img>
+                        <div>
+                            <img
+                                alt={props.original.filename}
+                                src={props.original.file}
+                                width="100px"
+                                height="auto"
+                            ></img>
+                        </div>
                     )
                 }
             },

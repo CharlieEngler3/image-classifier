@@ -52,6 +52,7 @@ updateMeme = async(req, res) => {
         }
         meme.name = body.name
         meme.description = body.description
+        meme.filename = body.filename
         meme.file = body.file
         meme
             .save()

@@ -42,8 +42,9 @@ class MemesUpdate extends Component {
         this.state = {
             id: this.props.match.params.id,
             name: '',
-            rating: '',
-            time: '',
+            description: '',
+            filename: '',
+            file: '',
         }
     }
 
@@ -53,10 +54,7 @@ class MemesUpdate extends Component {
     }
 
     handleChangeInputDescription = async event => {
-        const description = event.target.validity.valid
-            ? event.target.value
-            : this.state.description
-
+        const description = event.target.value
         this.setState({ description })
     }
 
@@ -68,19 +66,25 @@ class MemesUpdate extends Component {
         })
 
         this.setState({ file })
+
+        const filename = event.target.value
+        this.setState({ filename })
     }
 
     handleUpdateMeme = async () => {
-        const { id, name, description, file } = this.state
-        const payload = { name, description, file }
+        const { id, name, description, filename, file } = this.state
+        const payload = { name, description, filename, file }
 
         await api.updateMemeById(id, payload).then(res => {
             window.alert(`Meme updated successfully`)
             this.setState({
                 name: '',
                 description: '',
+                filename: '',
                 file: '',
             })
+
+            window.location.href = "/memes/list"
         })
     }
 
@@ -91,15 +95,16 @@ class MemesUpdate extends Component {
         this.setState({
             name: meme.data.data.name,
             description: meme.data.data.description,
+            filename: meme.data.data.filename,
             file: meme.data.data.file,
         })
     }
 
     render() {
-        const { name, description } = this.state
+        const { name, description, filename } = this.state
         return (
             <Wrapper>
-                <Title>Update Meme</Title>
+                <Title>Update</Title>
 
                 <Label>Name: </Label>
                 <InputText
@@ -113,6 +118,13 @@ class MemesUpdate extends Component {
                     type="text"
                     value={description}
                     onChange={this.handleChangeInputDescription}
+                />
+
+                <Label>File Name: </Label>
+                <InputText
+                    type="text"
+                    value={filename}
+                    onChange={this.handleChangeInputFile}
                 />
 
                 <Label>File: </Label>
