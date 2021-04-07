@@ -19,6 +19,24 @@ const Delete = styled.div`
     cursor: pointer;
 `
 
+const Popup = styled.div`
+    cursor: pointer;
+    position: absolute;
+    margin-left: -600px;
+    margin-top: -100px;
+    z-index: 2;
+    box-shadow: 0px 0px 100px 10px #111111;
+`
+
+const ImageButton = styled.div`
+    cursor: pointer;
+    position: absolute;
+    width: 100px;
+    height: 77px;
+    clip: rect(0px, 100px, 77px, 0px);
+    z-index: 1;
+`
+
 class UpdateMeme extends Component {
     updateUser = event => {
         event.preventDefault()
@@ -50,6 +68,41 @@ class DeleteMeme extends Component {
     }
 }
 
+class ImageHandler extends Component {
+    state = {
+        seen: true
+    }
+
+    togglePopup = () => {
+        this.setState({
+            seen: !this.state.seen
+        })
+    }
+
+    render() {
+        return  <div>
+                    {!this.state.seen ? <Popup onClick={this.togglePopup}>
+                        <img
+                            alt={this.props.filename}
+                            src={this.props.file}
+                            width="1000px"
+                            height="auto"
+                        />
+                    </Popup> : <ImageButton onClick={this.togglePopup}>
+                        <img
+                            alt={this.props.filename}
+                            src={this.props.file}
+                            width="100px"
+                            height="auto"
+                        />
+                    </ImageButton>}
+                    <br/>
+                    <br/>
+                    <br/>
+                </div>
+    }
+}
+
 class MemesList extends Component {
     constructor(props) {
         super(props)
@@ -74,7 +127,6 @@ class MemesList extends Component {
 
     render() {
         const { memes, isLoading } = this.state
-        console.log('TCL: MemesList -> render -> memes', memes)
 
         const columns = [
             {
@@ -102,12 +154,9 @@ class MemesList extends Component {
                 Cell: function(props){
                     return(
                         <div>
-                            <img
-                                alt={props.original.filename}
-                                src={props.original.file}
-                                width="100px"
-                                height="auto"
-                            ></img>
+                            <div width="100px">
+                                <ImageHandler filename={props.original.filename} file={props.original.file} />
+                            </div>
                         </div>
                     )
                 }
