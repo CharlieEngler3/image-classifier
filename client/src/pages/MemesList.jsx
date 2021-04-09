@@ -132,7 +132,6 @@ class MemesList extends Component {
             {
                 Header: 'ID',
                 accessor: '_id',
-                filterable: true,
             },
             {
                 Header: 'Name',
