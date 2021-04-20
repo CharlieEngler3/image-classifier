@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import api from '../api'
-import ReactTable from "react-table-6";  
-import "react-table-6/react-table.css"
+
+import '../style/style.css'
 
 import styled from 'styled-components'
 
@@ -22,7 +22,7 @@ const Delete = styled.div`
 const Popup = styled.div`
     cursor: pointer;
     position: absolute;
-    margin-left: -600px;
+    margin-left: -850px;
     margin-top: -100px;
     z-index: 2;
     box-shadow: 0px 0px 100px 10px #111111;
@@ -36,6 +36,113 @@ const ImageButton = styled.div`
     clip: rect(0px, 100px, 77px, 0px);
     z-index: 1;
 `
+
+const SearchBar = styled.input.attrs({
+    className:'form-control',
+})`
+    cursor: text;
+    border: 1px solid black;
+`
+
+const SearchReload = styled.input.attrs({
+    className:'form-control',
+})`
+    cursor: pointer;
+    background-color: #cdcdcd;
+    color: #000000;
+`
+
+const SearchSubmit = styled.input.attrs({
+    className:'form-control',
+})`
+    cursor: pointer;
+    background-color: #6cd649;
+    color: #000000;
+`
+
+class Search extends Component {
+    constructor(props){
+        super(props)
+        this.state = {
+            term: ''
+        }
+    }
+
+    handleChangeInputSearch = async event => {
+        const term = event.target.value
+        this.setState({ term })
+    }
+
+    render(){
+        const term = this.state.term
+
+        let isTerm = false
+        if(term.length > 0)
+            isTerm = true
+
+        return <div>
+            <SearchBar
+                type="text"
+                value={term}
+                onChange={this.handleChangeInputSearch}
+            />
+            {isTerm && (
+                <SearchSubmit 
+                    type="submit"
+                    value="Search"
+                    onClick={() => this.props.go(term)}
+                />
+            )}
+            {/*🗘*/}
+            <SearchReload 
+                type="submit"
+                value="Reload Table"
+                onClick={this.props.reloadTable}
+            />
+        </div>
+    }
+}
+
+class Table extends Component {
+    render() {
+        return <table className="table">
+            <thead>
+                <tr>
+                    {this.props.columns.map(columns => (
+                        <th key={columns.Header}>{columns.Header}</th>
+                    ))}
+                </tr>
+            </thead>
+            <tbody>
+                {this.props.data.map(data => {
+                    return <tr key={data._id}>
+                        <td>
+                            {data._id}
+                        </td>
+                        <td>
+                            {data.name}
+                        </td>
+                        <td>
+                            {data.description}
+                        </td>
+                        <td>
+                            {data.filename}
+                        </td>
+                        <td width="120px">
+                            {<ImageHandler filename={data.filename} file={data.file} />}
+                        </td>
+                        <td>
+                            {<DeleteMeme id={data._id} />}
+                        </td>
+                        <td>
+                            {<UpdateMeme id={data._id} />}
+                        </td>
+                    </tr>
+                })}
+            </tbody>
+        </table>
+    }
+}
 
 class UpdateMeme extends Component {
     updateUser = event => {
@@ -109,24 +216,41 @@ class MemesList extends Component {
         this.state = {
             memes: [],
             columns: [],
-            isLoading: false,
         }
+        this.searchGo = this.searchGo.bind(this)
+    }
+    
+    searchGo = async (term) => {
+        await api.searchMeme(term).then(memes => {
+
+            console.log("Search Go function returned: %o", memes)
+
+            this.setState({
+                memes: memes.data.data,
+            })
+        }).catch(error => {
+            this.componentDidMount()
+        })
     }
 
-    componentDidMount = async () => {
-        this.setState({ isLoading: true })
-
+    reloadTable = async () => {
         await api.getAllMemes().then(memes => {
             this.setState({
                 memes: memes.data.data,
             })
         })
+    }
 
-        this.setState({ isLoading: false })
+    componentDidMount = async () => {
+        await api.getAllMemes().then(memes => {
+            this.setState({
+                memes: memes.data.data,
+            })
+        })
     }
 
     render() {
-        const { memes, isLoading } = this.state
+        const { memes } = this.state
 
         const columns = [
             {
@@ -150,37 +274,14 @@ class MemesList extends Component {
             {
                 Header: 'File',
                 accessor: 'file',
-                Cell: function(props){
-                    return(
-                        <div>
-                            <div width="100px">
-                                <ImageHandler filename={props.original.filename} file={props.original.file} />
-                            </div>
-                        </div>
-                    )
-                }
             },
             {
-                Header: '',
-                accessor: '',
-                Cell: function(props) {
-                    return (
-                        <span>
-                            <DeleteMeme id={props.original._id} />
-                        </span>
-                    )
-                },
+                Header: 'Delete',
+                accessor: 'delete',
             },
             {
-                Header: '',
-                accessor: '',
-                Cell: function(props) {
-                    return (
-                        <span>
-                            <UpdateMeme id={props.original._id} />
-                        </span>
-                    )
-                },
+                Header: 'Update',
+                accessor: 'update',
             },
         ]
 
@@ -191,14 +292,11 @@ class MemesList extends Component {
 
         return (
             <Wrapper>
+                <Search reloadTable={this.reloadTable} go={this.searchGo}/>
                 {showTable && (
-                    <ReactTable
-                        data={memes}
+                    <Table
                         columns={columns}
-                        loading={isLoading}
-                        defaultPageSize={10}
-                        showPageSizeOptions={true}
-                        minRows={0}
+                        data={memes}
                     />
                 )}
             </Wrapper>

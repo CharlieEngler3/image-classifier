@@ -54,9 +54,7 @@ updateMeme = async(req, res) => {
         meme.description = body.description
         meme.filename = body.filename
         meme.file = body.file
-        meme
-            .save()
-            .then(() => {
+        meme.save().then(() => {
                 return res.status(200).json({
                     success: true,
                     id: meme._id,
@@ -70,6 +68,37 @@ updateMeme = async(req, res) => {
                 })
             })
     })
+}
+
+searchMeme = async(req, res) => {
+    const body = req.body
+
+    if(!body){
+        return res.status(400).json({
+            success: false,
+            error: 'You must provide a body to search',
+        })
+    }
+
+    const searchName = req.params.term.toString().toLowerCase()
+
+    await Meme.find({ lowerName: {$regex: '.*' + searchName + '.*'} }, (err, meme) => {
+        if(err){
+            console.log("Search Error", err)
+            return
+        }
+
+        let memes = []
+
+        for(let i = 0; i < meme.length; i++){
+            memes.push(meme[i])
+        }
+
+        return res.status(200).json({
+            success: true,
+            data: memes,
+        })
+    }).catch(err => console.log(err))
 }
 
 deleteMeme = async(req, res) => {
@@ -120,6 +149,7 @@ getMemes = async(req, res) => {
 module.exports = {
     createMeme,
     updateMeme,
+    searchMeme,
     deleteMeme,
     getMemes,
     getMemeById,

@@ -41,6 +41,7 @@ class MemesInsert extends Component{
 
         this.state = {
             name: '',
+            lowerName: '',
             description: '',
             filename: '',
             file: '',
@@ -50,6 +51,8 @@ class MemesInsert extends Component{
     handleChangeInputName = async event => {
         const name = event.target.value
         this.setState({ name })
+        const lowerName = name.toLowerCase()
+        this.setState({ lowerName })
     }
 
     handleChangeInputDescription = async event => {
@@ -71,13 +74,14 @@ class MemesInsert extends Component{
     }
 
     handleIncludeMeme = async () => {
-        const { name, description, filename, file } = this.state
-        const payload = { name, description, filename, file }
+        const { name, lowerName, description, filename, file } = this.state
+        const payload = { name, lowerName, description, filename, file }
 
         await api.insertMeme(payload).then(res => {
             window.alert(`Meme inserted successfully`)
             this.setState({
                 name: '',
+                lowerName: '',
                 description: '',
                 filename: '',
                 file: '',
