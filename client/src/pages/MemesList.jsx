@@ -71,6 +71,13 @@ class Search extends Component {
     handleChangeInputSearch = async event => {
         const term = event.target.value
         this.setState({ term })
+
+        if(term.length > 0){
+            this.props.go(term)
+        } 
+        else{
+            this.props.reloadTable()
+        }
     }
 
     render(){
@@ -87,14 +94,14 @@ class Search extends Component {
                 onChange={this.handleChangeInputSearch}
             />
             {isTerm && (
-                <SearchSubmit 
+                <SearchSubmit
                     type="submit"
                     value="Search"
                     onClick={() => this.props.go(term)}
                 />
             )}
             {/*🗘*/}
-            <SearchReload 
+            <SearchReload
                 type="submit"
                 value="Reload Table"
                 onClick={this.props.reloadTable}
@@ -223,7 +230,7 @@ class MemesList extends Component {
     searchGo = async (term) => {
         await api.searchMeme(term).then(memes => {
 
-            console.log("Search Go function returned: %o", memes)
+            //console.log("Search Go function returned: %o", memes)
 
             this.setState({
                 memes: memes.data.data,
