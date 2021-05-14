@@ -9,6 +9,11 @@ const Wrapper = styled.div`
     padding: 0 40px 40px 40px;
 `
 
+const Video = styled.div`
+    color: #0080ff;
+    cursor: pointer;
+`
+
 const Update = styled.div`
     color: #ef9b0f;
     cursor: pointer;
@@ -136,7 +141,10 @@ class Table extends Component {
                             {data.filename}
                         </td>
                         <td width="120px">
-                            {<ImageHandler filename={data.filename} file={data.file} />}
+                            {<ImageHandler filename={data.filename} file={data.image} />}
+                        </td>
+                        <td>
+                            {<VideoLink name={data.name} />}
                         </td>
                         <td>
                             {<DeleteMeme id={data._id} />}
@@ -148,6 +156,18 @@ class Table extends Component {
                 })}
             </tbody>
         </table>
+    }
+}
+
+class VideoLink extends Component {
+    updateUser = event => {
+        event.preventDefault()
+
+        window.location.href = `/memes/video/${this.props.name}`
+    }
+
+    render() {
+        return <Video onClick={this.updateUser}>Video</Video>
     }
 }
 
@@ -229,9 +249,6 @@ class MemesList extends Component {
     
     searchGo = async (term) => {
         await api.searchMeme(term).then(memes => {
-
-            //console.log("Search Go function returned: %o", memes)
-
             this.setState({
                 memes: memes.data.data,
             })
@@ -279,8 +296,12 @@ class MemesList extends Component {
                 accessor: 'filename',
             },
             {
-                Header: 'File',
+                Header: 'Image',
                 accessor: 'file',
+            },
+            {
+                Header: 'Video',
+                accessor: 'video',
             },
             {
                 Header: 'Delete',

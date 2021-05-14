@@ -8,9 +8,9 @@ const memeRouter = require('./routes/meme-router')
 const app = express()
 const apiPort = 3000;
 
-app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
 app.use(cors())
-app.use(bodyParser.json())
+app.use(bodyParser.json({ limit: '50mb' }))
 
 db.on('error', console.error.bind(console, 'MongoDB connection error:'))
 

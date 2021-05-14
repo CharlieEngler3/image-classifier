@@ -51,6 +51,8 @@ class MemesUpdate extends Component {
     handleChangeInputName = async event => {
         const name = event.target.value
         this.setState({ name })
+        const lowerName = name.toLowerCase()
+        this.setState({ lowerName })
     }
 
     handleChangeInputDescription = async event => {
@@ -67,18 +69,19 @@ class MemesUpdate extends Component {
 
         this.setState({ file })
 
-        const filename = event.target.value
+        const filename = event.target.value.substring(12, event.target.value.length)
         this.setState({ filename })
     }
 
     handleUpdateMeme = async () => {
-        const { id, name, description, filename, file } = this.state
-        const payload = { name, description, filename, file }
+        const { id, name, lowerName, description, filename, file } = this.state
+        const payload = { name, lowerName, description, filename, file }
 
         await api.updateMemeById(id, payload).then(res => {
             window.alert(`Meme updated successfully`)
             this.setState({
                 name: '',
+                lowerName: '',
                 description: '',
                 filename: '',
                 file: '',

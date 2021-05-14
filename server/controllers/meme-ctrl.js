@@ -1,4 +1,5 @@
-const Meme = require('../models/meme-model')
+const {Meme} = require('../models/meme-model')
+const {CustomFile} = require('../models/meme-model')
 
 createMeme = (req, res) => {
     const body = req.body
@@ -29,6 +30,39 @@ createMeme = (req, res) => {
             return res.status(400).json({
                 error,
                 message: 'Meme was not added!',
+            })
+        })
+}
+
+saveFile = (req, res) => {
+    const body = req.body
+
+    if(!body){
+        return res.status(400).json({
+            success: false,
+            error: 'Please provide a file',
+        })
+    }
+
+    const file = new CustomFile(body)
+
+    if(!file){
+        return res.status(400).json({ success: false, error: err })
+    }
+
+    file
+        .save()
+        .then(() => {
+            return res.status(201).json({
+                success: true,
+                id: file._id,
+                message: 'File uploaded!',
+            })
+        })
+        .catch(error => {
+            return res.status(400).json({
+                error,
+                message: 'File was not uploaded!',
             })
         })
 }
@@ -146,11 +180,27 @@ getMemes = async(req, res) => {
     }).catch(err => console.log(err))
 }
 
+getFiles = async(req, res) => {
+    await CustomFile.find({}, (err, files) => {
+        if(err){
+            return res.status(400).json({ success: false, error: err })
+        }
+        if(!files.length){
+            return res
+                .status(404)
+                .json({ success: false, error: `File not found` })
+        }
+        return res.status(200).json({ success: true, data: files })
+    }).catch(err => console.log(err))
+}
+
 module.exports = {
     createMeme,
+    saveFile,
     updateMeme,
     searchMeme,
     deleteMeme,
     getMemes,
+    getFiles,
     getMemeById,
 }

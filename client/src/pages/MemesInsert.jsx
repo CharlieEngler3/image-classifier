@@ -44,7 +44,7 @@ class MemesInsert extends Component{
             lowerName: '',
             description: '',
             filename: '',
-            file: '',
+            image: '',
         }
     }
 
@@ -61,33 +61,47 @@ class MemesInsert extends Component{
     }
     
     handleChangeInputFile = async event => {
-        let file = event.target.files[0]
-
-        await encodeImageFileAsURL(file).then(response => {
-            file = response
-        })
-
-        this.setState({ file })
-
-        const filename = event.target.value.substring(12, event.target.value.length-4)
+        const filename = event.target.value.substring(12, event.target.value.length)
         this.setState({ filename })
+
+        let image = event.target.files[0]
+        let tempFile = null
+
+        const imageExtensions = ['.jpg', '.png', '.jpeg', '.gif']
+        let isImage = false
+
+        for(let i = 0; i < imageExtensions.length; i++){
+            if(filename.includes(imageExtensions[i]))
+                isImage = true
+        }
+
+        if(isImage){
+            await encodeImageFileAsURL(image).then(response => {
+                image = response
+            })
+        }
+        else{
+            image = 'Non Image Post'
+
+            tempFile = event.target.files[0]
+        }
+
+        this.setState({ image, tempFile })
     }
 
     handleIncludeMeme = async () => {
-        const { name, lowerName, description, filename, file } = this.state
-        const payload = { name, lowerName, description, filename, file }
-
-        await api.insertMeme(payload).then(res => {
+        const { name, lowerName, description, filename, image, tempFile } = this.state
+        const imagePayload = { name, lowerName, description, filename, image }
+        
+        await api.insertMeme(imagePayload).then(res => {
             window.alert(`Meme inserted successfully`)
             this.setState({
                 name: '',
                 lowerName: '',
                 description: '',
                 filename: '',
-                file: '',
+                image: '',
             })
-
-            window.location.href = "/memes/list"
         }).catch(error => {
             if (!error.response) {
                 console.log('Error: Network Error')
@@ -95,6 +109,34 @@ class MemesInsert extends Component{
                 console.log(error.response.data.message)
             }
         })
+        
+        if(tempFile != null){
+            if(tempFile.size > 2000000){
+                let chunkSize = 2000000
+                const convertedFile = await toBase64(tempFile)
+                let fileSize = convertedFile.length
+        
+                let chunks = Math.ceil(fileSize/chunkSize, chunkSize)
+                
+                for(let i = 0; i < chunks; i++){
+                    let index = i
+                    const file = await DivideFile(convertedFile, chunkSize, i)
+
+                    const filePayload = { index, name, lowerName, file }
+                    
+                    await api.saveFile(filePayload).then(res => {
+                        console.log(`File uploaded successfully`)
+                    }).catch(error => {
+                        if (!error.response) {
+                            console.log('Error: Network Error')
+                        } else {
+                            console.log(error.response.data.message)
+                        }
+                    })
+                }
+                
+            }
+        }
     }
 
     render(){
@@ -142,5 +184,25 @@ var encodeImageFileAsURL = function(file){
         reader.readAsDataURL(file)
     })
 }
+
+const DivideFile = (file, chunkSize, offset) => new Promise((resolve, reject) => {
+    offset = offset * chunkSize
+
+    let sliceLength = offset + chunkSize
+
+    if(offset + chunkSize > file.length)
+        sliceLength = file.length
+
+    let slicedString = file.slice(offset, sliceLength)
+
+    resolve(slicedString)
+})
+
+const toBase64 = file => new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onload = () => resolve(reader.result)
+    reader.onerror = error => reject(error)
+})
 
 export default MemesInsert
