@@ -69,6 +69,7 @@ saveFile = (req, res) => {
 
 updateMeme = async(req, res) => {
     const body = req.body
+    let oldName
 
     if(!body){
         return res.status(400).json({
@@ -77,30 +78,48 @@ updateMeme = async(req, res) => {
         })
     }
 
-    Meme.findOne({ _id: req.params.id }, (err, meme) => {
+    await Meme.findOne({ _id: req.params.id }, (err, meme) => {
         if(err){
             return res.status(404).json({
                 err,
                 message: 'Meme not found!',
             })
         }
+        oldName = meme.name
+
         meme.name = body.name
+        meme.lowerName = body.name.toLowerCase()
         meme.description = body.description
-        meme.filename = body.filename
-        meme.file = body.file
         meme.save().then(() => {
-                return res.status(200).json({
-                    success: true,
-                    id: meme._id,
-                    message: 'Meme updated!',
-                })
+            updateFile(oldName, body)
+
+            return res.status(200).json({
+                success: true,
+                id: meme._id,
+                message: 'Meme updated!',
             })
-            .catch(error => {
-                return res.status(404).json({
-                    error,
-                    message: 'Meme not updated!',
-                })
+        }).catch(error => {
+            return res.status(404).json({
+                message: 'Meme not updated!',
             })
+        })
+    })
+}
+
+updateFile = async(fileName, body) => {
+    await CustomFile.find({ name: fileName }, (err, memeFiles) => {
+        if(err){
+            return res.status(404).json({
+                err,
+                message: 'File not found!',
+            })
+        }
+
+        for(let i = 0; i < memeFiles.length; i++){
+            memeFiles[i].name = body.name
+            memeFiles[i].lowerName = body.name.toLowerCase()
+            memeFiles[i].save()
+        }
     })
 }
 
@@ -115,24 +134,46 @@ searchMeme = async(req, res) => {
     }
 
     const searchName = req.params.term.toString().toLowerCase()
+    const exactSearch = req.params.mode
 
-    await Meme.find({ lowerName: {$regex: '.*' + searchName + '.*'} }, (err, meme) => {
-        if(err){
-            console.log("Search Error", err)
-            return
-        }
-
-        let memes = []
-
-        for(let i = 0; i < meme.length; i++){
-            memes.push(meme[i])
-        }
-
-        return res.status(200).json({
-            success: true,
-            data: memes,
-        })
-    }).catch(err => console.log(err))
+    if(!exactSearch){
+        await Meme.find({ lowerName: {$regex: '.*' + searchName + '.*'} }, (err, meme) => {
+            if(err){
+                console.log("Search Error", err)
+                return
+            }
+    
+            let memes = []
+    
+            for(let i = 0; i < meme.length; i++){
+                memes.push(meme[i])
+            }
+    
+            return res.status(200).json({
+                success: true,
+                data: memes,
+            })
+        }).catch(err => console.log(err))
+    }
+    else{
+        await Meme.find({ lowerName: searchName }, (err, meme) => {
+            if(err){
+                console.log("Search Error", err)
+                return
+            }
+    
+            let memes = []
+    
+            for(let i = 0; i < meme.length; i++){
+                memes.push(meme[i])
+            }
+    
+            return res.status(200).json({
+                success: true,
+                data: memes,
+            })
+        }).catch(err => console.log(err))
+    }
 }
 
 deleteMeme = async(req, res) => {
@@ -146,6 +187,8 @@ deleteMeme = async(req, res) => {
                 .status(404)
                 .json({ success: false, error: `Meme not found` })
         }
+
+        CustomFile.deleteMany({ name: req.params.name }).catch(err => console.log(err))
 
         return res.status(200).json({ success: true, data: meme })
     }).catch(err => console.log(err))

@@ -34,13 +34,14 @@ class Video extends Component {
     }
 }
 
-class VideoDisplay extends Component {
+class FileDisplay extends Component {
     constructor(props){
         super(props)
 
         this.state = {
             files: [],
             fileName: this.props.match.params.name,
+            fileType: this.props.match.params.type,
         }
     }
 
@@ -53,11 +54,27 @@ class VideoDisplay extends Component {
     }
 
     render() {
-        let showVideo = true
-        if (!this.state.files.length) {
-            showVideo = false
-        }
+        let showVideo = false
+        
+        if(this.state.files.length > 0){
+            switch(this.state.fileType){
+                case "mp4":
+                    showVideo = true
+                    break
+    
+                case "webm":
+                    showVideo = true
+                    break
 
+                case "ogg":
+                    showVideo = true
+                    break
+    
+                default:
+                    break
+            }
+        }
+        
         return <Wrapper>
                     {showVideo && (
                         <Video 
@@ -86,4 +103,4 @@ const CreateFileArray = (fileData, name) => new Promise((resolve, reject) => {
     resolve(finalFile)
 })
 
-export default VideoDisplay
+export default FileDisplay

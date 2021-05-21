@@ -8,9 +8,9 @@ export const insertMeme = payload => api.post(`/meme`, payload)
 export const saveFile = payload => api.post(`/file`, payload)
 export const getAllMemes = () => api.get(`/memes`)
 export const getAllFiles = () => api.get(`/files`)
-export const searchMeme = term => api.post(`/meme/search/${term}`)
+export const searchMeme = (term, mode) => api.post(`/meme/search/${term}/${mode}`)
 export const updateMemeById = (id, payload) => api.put(`/meme/update/${id}`, payload)
-export const deleteMemeById = id => api.delete(`/meme/${id}`)
+export const deleteMemeById = (id, name) => api.delete(`/meme/${id}/${name}`)
 export const getMemeById = id => api.get(`/meme/${id}`)
 
 const apis = {

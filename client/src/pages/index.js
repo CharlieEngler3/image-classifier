@@ -1,6 +1,6 @@
 import MemesInsert from './MemesInsert'
 import MemesList from './MemesList'
 import MemesUpdate from './MemesUpdate'
-import VideoDisplay from './VideoDisplay'
+import FileDisplay from './FileDisplay'
 
-export { MemesList, MemesInsert, MemesUpdate, VideoDisplay }
+export { MemesList, MemesInsert, MemesUpdate, FileDisplay }

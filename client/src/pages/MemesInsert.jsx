@@ -93,25 +93,32 @@ class MemesInsert extends Component{
         const { name, lowerName, description, filename, image, tempFile } = this.state
         const imagePayload = { name, lowerName, description, filename, image }
         
-        await api.insertMeme(imagePayload).then(res => {
-            window.alert(`Meme inserted successfully`)
-            this.setState({
-                name: '',
-                lowerName: '',
-                description: '',
-                filename: '',
-                image: '',
-            })
-        }).catch(error => {
-            if (!error.response) {
-                console.log('Error: Network Error')
-            } else {
-                console.log(error.response.data.message)
-            }
+        let canInsert = true
+
+        await api.searchMeme(name, true).then(memes => {
+            if(memes.data.data.length > 0)
+                canInsert = false
         })
-        
-        if(tempFile != null){
-            if(tempFile.size > 2000000){
+
+        if(canInsert){
+            await api.insertMeme(imagePayload).then(res => {
+                window.alert(`Meme inserted successfully`)
+                this.setState({
+                    name: '',
+                    lowerName: '',
+                    description: '',
+                    filename: '',
+                    image: '',
+                })
+            }).catch(error => {
+                if (!error.response) {
+                    console.log('Error: Network Error')
+                } else {
+                    console.log(error.response.data.message)
+                }
+            })
+            
+            if(tempFile != null){
                 let chunkSize = 2000000
                 const convertedFile = await toBase64(tempFile)
                 let fileSize = convertedFile.length
@@ -121,7 +128,7 @@ class MemesInsert extends Component{
                 for(let i = 0; i < chunks; i++){
                     let index = i
                     const file = await DivideFile(convertedFile, chunkSize, i)
-
+    
                     const filePayload = { index, name, lowerName, file }
                     
                     await api.saveFile(filePayload).then(res => {
@@ -134,8 +141,10 @@ class MemesInsert extends Component{
                         }
                     })
                 }
-                
             }
+        }
+        else{
+            alert("An entry by this name already exists.")
         }
     }
 
@@ -168,7 +177,7 @@ class MemesInsert extends Component{
                 />
                 <br/>
 
-                <Button onClick={this.handleIncludeMeme}>Add Meme</Button>
+                <Button onClick={this.handleIncludeMeme}>Add</Button>
                 <CancelButton href={'/memes/list'}>Cancel</CancelButton>
             </Wrapper>
         )

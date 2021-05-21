@@ -43,8 +43,6 @@ class MemesUpdate extends Component {
             id: this.props.match.params.id,
             name: '',
             description: '',
-            filename: '',
-            file: '',
         }
     }
 
@@ -60,22 +58,9 @@ class MemesUpdate extends Component {
         this.setState({ description })
     }
 
-    handleChangeInputFile = async event => {
-        let file = event.target.files[0]
-
-        await encodeImageFileAsURL(file).then(response => {
-            file = response
-        })
-
-        this.setState({ file })
-
-        const filename = event.target.value.substring(12, event.target.value.length)
-        this.setState({ filename })
-    }
-
     handleUpdateMeme = async () => {
-        const { id, name, lowerName, description, filename, file } = this.state
-        const payload = { name, lowerName, description, filename, file }
+        const { id, name, lowerName, description } = this.state
+        const payload = { name, lowerName, description }
 
         await api.updateMemeById(id, payload).then(res => {
             window.alert(`Meme updated successfully`)
@@ -83,8 +68,6 @@ class MemesUpdate extends Component {
                 name: '',
                 lowerName: '',
                 description: '',
-                filename: '',
-                file: '',
             })
 
             window.location.href = "/memes/list"
@@ -98,13 +81,11 @@ class MemesUpdate extends Component {
         this.setState({
             name: meme.data.data.name,
             description: meme.data.data.description,
-            filename: meme.data.data.filename,
-            file: meme.data.data.file,
         })
     }
 
     render() {
-        const { name, description, filename } = this.state
+        const { name, description } = this.state
         return (
             <Wrapper>
                 <Title>Update</Title>
@@ -123,34 +104,11 @@ class MemesUpdate extends Component {
                     onChange={this.handleChangeInputDescription}
                 />
 
-                <Label>File Name: </Label>
-                <InputText
-                    type="text"
-                    value={filename}
-                    onChange={this.handleChangeInputFile}
-                />
-
-                <Label>File: </Label>
-                <InputText
-                    type="file"
-                    onChange={this.handleChangeInputFile}
-                />
-
-                <Button onClick={this.handleUpdateMeme}>Update Meme</Button>
+                <Button onClick={this.handleUpdateMeme}>Update</Button>
                 <CancelButton href={'/memes/list'}>Cancel</CancelButton>
             </Wrapper>
         )
     }
-}
-
-var encodeImageFileAsURL = function(file){
-    return new Promise((resolve, reject) => {
-        var reader = new FileReader()
-        reader.onloadend = function() {
-            resolve(reader.result)
-        }
-        reader.readAsDataURL(file)
-    })
 }
 
 export default MemesUpdate

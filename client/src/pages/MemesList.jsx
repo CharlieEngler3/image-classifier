@@ -127,6 +127,45 @@ class Table extends Component {
             </thead>
             <tbody>
                 {this.props.data.map(data => {
+                    let lastIndex = data.filename.lastIndexOf('.') + 1
+                    let fileType = data.filename.substr(lastIndex)
+
+                    let isImage = false
+
+                    switch(fileType){
+                        case "jpg":
+                            isImage = true
+                            break
+
+                        case "png":
+                            isImage = true
+                            break
+
+                        case "jpeg":
+                            isImage = true
+                            break
+
+                        case "gif":
+                            isImage = true
+                            break
+
+                        case "mp4":
+                            isImage = false
+                            break
+
+                        case "webm":
+                            isImage = false
+                            break
+
+                        case "ogg":
+                            isImage = false
+                            break
+
+                        default:
+                            isImage = false
+                            break
+                    }
+
                     return <tr key={data._id}>
                         <td>
                             {data._id}
@@ -141,13 +180,12 @@ class Table extends Component {
                             {data.filename}
                         </td>
                         <td width="120px">
-                            {<ImageHandler filename={data.filename} file={data.image} />}
+                            {isImage ? <ImageHandler filename={data.filename} file={data.image} /> :
+                                <FileLink name={data.name} fileType={fileType} />
+                            }
                         </td>
                         <td>
-                            {<VideoLink name={data.name} />}
-                        </td>
-                        <td>
-                            {<DeleteMeme id={data._id} />}
+                            {<DeleteMeme id={data._id} name={data.name} />}
                         </td>
                         <td>
                             {<UpdateMeme id={data._id} />}
@@ -159,15 +197,15 @@ class Table extends Component {
     }
 }
 
-class VideoLink extends Component {
+class FileLink extends Component {
     updateUser = event => {
         event.preventDefault()
 
-        window.location.href = `/memes/video/${this.props.name}`
+        window.location.href = `/memes/file/${this.props.name}/${this.props.fileType}`
     }
 
     render() {
-        return <Video onClick={this.updateUser}>Video</Video>
+        return <Video onClick={this.updateUser}>Open File <br/> ({this.props.fileType})</Video>
     }
 }
 
@@ -186,13 +224,13 @@ class UpdateMeme extends Component {
 class DeleteMeme extends Component {
     deleteUser = event => {
         event.preventDefault()
-
+        
         if (
             window.confirm(
                 `Do you want to delete the meme ${this.props.id} permanently?`,
             )
         ) {
-            api.deleteMemeById(this.props.id)
+            api.deleteMemeById(this.props.id, this.props.name)
             window.location.reload()
         }
     }
@@ -248,7 +286,7 @@ class MemesList extends Component {
     }
     
     searchGo = async (term) => {
-        await api.searchMeme(term).then(memes => {
+        await api.searchMeme(term, false).then(memes => {
             this.setState({
                 memes: memes.data.data,
             })
@@ -296,12 +334,8 @@ class MemesList extends Component {
                 accessor: 'filename',
             },
             {
-                Header: 'Image',
+                Header: 'File',
                 accessor: 'file',
-            },
-            {
-                Header: 'Video',
-                accessor: 'video',
             },
             {
                 Header: 'Delete',

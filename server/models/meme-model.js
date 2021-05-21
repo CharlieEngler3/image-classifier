@@ -20,7 +20,6 @@ const CustomFileSchema = new Schema(
         name: { type: String, required: true },
         lowerName: { type: String, required: true },
         file: { type: String, required: true },
-        //file: { data: Buffer, contentType: String },
     }
 )
 
