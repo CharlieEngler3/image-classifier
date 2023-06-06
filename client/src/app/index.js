@@ -2,7 +2,7 @@ import React from 'react'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 
 import { NavBar } from '../components'
-import { MemesList, MemesInsert, MemesUpdate, FileDisplay } from '../pages'
+import { ImagesList, ImagesInsert, ImagesUpdate, FileDisplay } from '../pages'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 
@@ -11,11 +11,11 @@ function App(){
     <Router>
         <NavBar />
         <Switch>
-            <Route path="/" exact component={MemesList} />
-            <Route path="/memes/list" exact component={MemesList}/>
-            <Route path="/memes/create" exact component={MemesInsert}/>
-            <Route path="/memes/update/:id" exact component={MemesUpdate}/>
-            <Route path="/memes/file/:name/:type" exact component={FileDisplay}/>
+            <Route path="/" exact component={ImagesList} />
+            <Route path="/images/list" exact component={ImagesList}/>
+            <Route path="/images/create" exact component={ImagesInsert}/>
+            <Route path="/images/update/:id" exact component={ImagesUpdate}/>
+            <Route path="/images/file/:name/:type" exact component={FileDisplay}/>
         </Switch>
     </Router>
   )

@@ -35,7 +35,7 @@ const CancelButton = styled.a.attrs({
     margin: 15px 15px 15px 5px;
 `
 
-class MemesInsert extends Component{
+class ImagesInsert extends Component{
     constructor(props){
         super(props)
 
@@ -89,20 +89,20 @@ class MemesInsert extends Component{
         this.setState({ image, tempFile })
     }
 
-    handleIncludeMeme = async () => {
+    handleIncludeImage = async () => {
         const { name, lowerName, description, filename, image, tempFile } = this.state
         const imagePayload = { name, lowerName, description, filename, image }
         
         let canInsert = true
 
-        await api.searchMeme(name, true).then(memes => {
-            if(memes.data.data.length > 0)
+        await api.searchImage(name, true).then(images => {
+            if(images.data.data.length > 0)
                 canInsert = false
         })
 
         if(canInsert){
-            await api.insertMeme(imagePayload).then(res => {
-                window.alert(`Meme inserted successfully`)
+            await api.insertImage(imagePayload).then(res => {
+                window.alert(`Image inserted successfully`)
                 this.setState({
                     name: '',
                     lowerName: '',
@@ -177,8 +177,8 @@ class MemesInsert extends Component{
                 />
                 <br/>
 
-                <Button onClick={this.handleIncludeMeme}>Add</Button>
-                <CancelButton href={'/memes/list'}>Cancel</CancelButton>
+                <Button onClick={this.handleIncludeImage}>Add</Button>
+                <CancelButton href={'/images/list'}>Cancel</CancelButton>
             </Wrapper>
         )
     }
@@ -214,4 +214,4 @@ const toBase64 = file => new Promise((resolve, reject) => {
     reader.onerror = error => reject(error)
 })
 
-export default MemesInsert
+export default ImagesInsert

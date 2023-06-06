@@ -35,7 +35,7 @@ const CancelButton = styled.a.attrs({
     margin: 15px 15px 15px 5px;
 `
 
-class MemesUpdate extends Component {
+class ImagesUpdate extends Component {
     constructor(props) {
         super(props)
 
@@ -58,29 +58,29 @@ class MemesUpdate extends Component {
         this.setState({ description })
     }
 
-    handleUpdateMeme = async () => {
+    handleUpdateImage = async () => {
         const { id, name, lowerName, description } = this.state
         const payload = { name, lowerName, description }
 
-        await api.updateMemeById(id, payload).then(res => {
-            window.alert(`Meme updated successfully`)
+        await api.updateImageById(id, payload).then(res => {
+            window.alert(`Image updated successfully`)
             this.setState({
                 name: '',
                 lowerName: '',
                 description: '',
             })
 
-            window.location.href = "/memes/list"
+            window.location.href = "/images/list"
         })
     }
 
     componentDidMount = async () => {
         const { id } = this.state
-        const meme = await api.getMemeById(id)
+        const image = await api.getImageById(id)
 
         this.setState({
-            name: meme.data.data.name,
-            description: meme.data.data.description,
+            name: image.data.data.name,
+            description: image.data.data.description,
         })
     }
 
@@ -104,11 +104,11 @@ class MemesUpdate extends Component {
                     onChange={this.handleChangeInputDescription}
                 />
 
-                <Button onClick={this.handleUpdateMeme}>Update</Button>
-                <CancelButton href={'/memes/list'}>Cancel</CancelButton>
+                <Button onClick={this.handleUpdateImage}>Update</Button>
+                <CancelButton href={'/images/list'}>Cancel</CancelButton>
             </Wrapper>
         )
     }
 }
 
-export default MemesUpdate
+export default ImagesUpdate

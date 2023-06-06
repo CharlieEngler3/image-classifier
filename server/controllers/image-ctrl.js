@@ -1,35 +1,35 @@
-const {Meme} = require('../models/meme-model')
-const {CustomFile} = require('../models/meme-model')
+const {Image} = require('../models/image-model')
+const {CustomFile} = require('../models/image-model')
 
-createMeme = (req, res) => {
+createImage = (req, res) => {
     const body = req.body
 
     if(!body){
         return res.status(400).json({
             success: false,
-            error: 'Please provide a meme',
+            error: 'Please provide a image',
         })
     }
 
-    const meme = new Meme(body)
+    const image = new Image(body)
 
-    if(!meme){
+    if(!image){
         return res.status(400).json({ success: false, error: err })
     }
 
-    meme
+    image
         .save()
         .then(() => {
             return res.status(201).json({
                 success: true,
-                id: meme._id,
-                message: 'Meme added!',
+                id: image._id,
+                message: 'Image added!',
             })
         })
         .catch(error => {
             return res.status(400).json({
                 error,
-                message: 'Meme was not added!',
+                message: 'Image was not added!',
             })
         })
 }
@@ -67,7 +67,7 @@ saveFile = (req, res) => {
         })
 }
 
-updateMeme = async(req, res) => {
+updateImage = async(req, res) => {
     const body = req.body
     let oldName
 
@@ -78,36 +78,36 @@ updateMeme = async(req, res) => {
         })
     }
 
-    await Meme.findOne({ _id: req.params.id }, (err, meme) => {
+    await Image.findOne({ _id: req.params.id }, (err, image) => {
         if(err){
             return res.status(404).json({
                 err,
-                message: 'Meme not found!',
+                message: 'Image not found!',
             })
         }
-        oldName = meme.name
+        oldName = image.name
 
-        meme.name = body.name
-        meme.lowerName = body.name.toLowerCase()
-        meme.description = body.description
-        meme.save().then(() => {
+        image.name = body.name
+        image.lowerName = body.name.toLowerCase()
+        image.description = body.description
+        image.save().then(() => {
             updateFile(oldName, body)
 
             return res.status(200).json({
                 success: true,
-                id: meme._id,
-                message: 'Meme updated!',
+                id: image._id,
+                message: 'Image updated!',
             })
         }).catch(error => {
             return res.status(404).json({
-                message: 'Meme not updated!',
+                message: 'Image not updated!',
             })
         })
     })
 }
 
 updateFile = async(fileName, body) => {
-    await CustomFile.find({ name: fileName }, (err, memeFiles) => {
+    await CustomFile.find({ name: fileName }, (err, imageFiles) => {
         if(err){
             return res.status(404).json({
                 err,
@@ -115,15 +115,15 @@ updateFile = async(fileName, body) => {
             })
         }
 
-        for(let i = 0; i < memeFiles.length; i++){
-            memeFiles[i].name = body.name
-            memeFiles[i].lowerName = body.name.toLowerCase()
-            memeFiles[i].save()
+        for(let i = 0; i < imageFiles.length; i++){
+            imageFiles[i].name = body.name
+            imageFiles[i].lowerName = body.name.toLowerCase()
+            imageFiles[i].save()
         }
     })
 }
 
-searchMeme = async(req, res) => {
+searchImage = async(req, res) => {
     const body = req.body
 
     if(!body){
@@ -137,89 +137,87 @@ searchMeme = async(req, res) => {
     const exactSearch = req.params.mode
 
     if(!exactSearch){
-        await Meme.find({ lowerName: {$regex: '.*' + searchName + '.*'} }, (err, meme) => {
+        await Image.find({ lowerName: {$regex: '.*' + searchName + '.*'} }, (err, image) => {
             if(err){
                 console.log("Search Error", err)
                 return
             }
     
-            let memes = []
+            let images = []
     
-            for(let i = 0; i < meme.length; i++){
-                memes.push(meme[i])
+            for(let i = 0; i < image.length; i++){
+                images.push(image[i])
             }
     
             return res.status(200).json({
                 success: true,
-                data: memes,
+                data: images,
             })
         }).catch(err => console.log(err))
     }
     else{
-        await Meme.find({ lowerName: searchName }, (err, meme) => {
+        await Image.find({ lowerName: searchName }, (err, image) => {
             if(err){
                 console.log("Search Error", err)
                 return
             }
     
-            let memes = []
+            let images = []
     
-            for(let i = 0; i < meme.length; i++){
-                memes.push(meme[i])
+            for(let i = 0; i < image.length; i++){
+                images.push(image[i])
             }
     
             return res.status(200).json({
                 success: true,
-                data: memes,
+                data: images,
             })
         }).catch(err => console.log(err))
     }
 }
 
-deleteMeme = async(req, res) => {
-    await Meme.findOneAndDelete({ _id: req.params.id }, (err, meme) => {
+deleteImage = async(req, res) => {
+    await Image.findOneAndDelete({ _id: req.params.id }, (err, image) => {
         if(err){
             return res.status(400).json({ success: false, error: err })
         }
 
-        if(!meme){
+        if(!image){
             return res
                 .status(404)
-                .json({ success: false, error: `Meme not found` })
+                .json({ success: false, error: `Image not found` })
         }
 
         CustomFile.deleteMany({ name: req.params.name }).catch(err => console.log(err))
 
-        return res.status(200).json({ success: true, data: meme })
+        return res.status(200).json({ success: true, data: image })
     }).catch(err => console.log(err))
 }
 
-getMemeById = async(req, res) => {
-    await Meme.findOne({ _id: req.params.id }, (err, meme) => {
+getImageById = async(req, res) => {
+    await Image.findOne({ _id: req.params.id }, (err, image) => {
         if(err){
             return res.status(400).json({ success: false, error: err})
         }
 
-        if(!meme){
+        if(!image){
             return res
                 .status(404)
-                .json({ success: false, error: `Meme not found` })
+                .json({ success: false, error: `Image not found` })
         }
-        return res.status(200).json({ success: true, data: meme })
+        return res.status(200).json({ success: true, data: image })
     }).catch(err => console.log(err))
 }
 
-getMemes = async(req, res) => {
-    await Meme.find({}, (err, memes) => {
+getImages = async(req, res) => {
+    await Image.find({}, (err, images) => {
         if(err){
             return res.status(400).json({ success: false, error: err })
         }
-        if(!memes.length){
-            return res
-                .status(404)
-                .json({ success: false, error: `Meme not found` })
+        if(!images.length){
+            return res.status(200).json({ success: true, data: [] })
         }
-        return res.status(200).json({ success: true, data: memes })
+        return res.status(200).json({ success: true, data: images })
     }).catch(err => console.log(err))
 }
 
@@ -238,12 +236,12 @@ getFiles = async(req, res) => {
 }
 
 module.exports = {
-    createMeme,
+    createImage,
     saveFile,
-    updateMeme,
-    searchMeme,
-    deleteMeme,
-    getMemes,
+    updateImage,
+    searchImage,
+    deleteImage,
+    getImages,
     getFiles,
-    getMemeById,
+    getImageById,
 }

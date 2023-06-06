@@ -3,7 +3,7 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 
 const db = require('./db')
-const memeRouter = require('./routes/meme-router')
+const imageRouter = require('./routes/image-router')
 
 const app = express()
 const apiPort = 3000;
@@ -18,6 +18,6 @@ app.get('/', (req, res) => {
     res.send('The Backrooms')
 })
 
-app.use('/api', memeRouter)
+app.use('/api', imageRouter)
 
 app.listen(apiPort, () => console.log(`Server running on port ${apiPort}`))

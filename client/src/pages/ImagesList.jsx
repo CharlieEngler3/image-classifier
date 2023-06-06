@@ -185,10 +185,10 @@ class Table extends Component {
                             }
                         </td>
                         <td>
-                            {<DeleteMeme id={data._id} name={data.name} />}
+                            {<DeleteImage id={data._id} name={data.name} />}
                         </td>
                         <td>
-                            {<UpdateMeme id={data._id} />}
+                            {<UpdateImage id={data._id} />}
                         </td>
                     </tr>
                 })}
@@ -201,7 +201,7 @@ class FileLink extends Component {
     updateUser = event => {
         event.preventDefault()
 
-        window.location.href = `/memes/file/${this.props.name}/${this.props.fileType}`
+        window.location.href = `/images/file/${this.props.name}/${this.props.fileType}`
     }
 
     render() {
@@ -209,11 +209,11 @@ class FileLink extends Component {
     }
 }
 
-class UpdateMeme extends Component {
+class UpdateImage extends Component {
     updateUser = event => {
         event.preventDefault()
 
-        window.location.href = `/memes/update/${this.props.id}`
+        window.location.href = `/images/update/${this.props.id}`
     }
 
     render() {
@@ -221,17 +221,18 @@ class UpdateMeme extends Component {
     }
 }
 
-class DeleteMeme extends Component {
+class DeleteImage extends Component {
     deleteUser = event => {
         event.preventDefault()
         
         if (
             window.confirm(
-                `Do you want to delete the meme ${this.props.id} permanently?`,
+                `Do you want to delete this image ${this.props.id} permanently?`,
             )
         ) {
-            api.deleteMemeById(this.props.id, this.props.name)
-            window.location.reload()
+            api.deleteImageById(this.props.id, this.props.name).then(() => {
+                window.location.reload()
+            })
         }
     }
 
@@ -275,20 +276,20 @@ class ImageHandler extends Component {
     }
 }
 
-class MemesList extends Component {
+class ImagesList extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            memes: [],
+            images: [],
             columns: [],
         }
         this.searchGo = this.searchGo.bind(this)
     }
     
     searchGo = async (term) => {
-        await api.searchMeme(term, false).then(memes => {
+        await api.searchImage(term, false).then(images => {
             this.setState({
-                memes: memes.data.data,
+                images: images.data.data,
             })
         }).catch(error => {
             this.componentDidMount()
@@ -296,23 +297,23 @@ class MemesList extends Component {
     }
 
     reloadTable = async () => {
-        await api.getAllMemes().then(memes => {
+        await api.getAllImages().then(images => {
             this.setState({
-                memes: memes.data.data,
+                images: images.data.data,
             })
         })
     }
 
     componentDidMount = async () => {
-        await api.getAllMemes().then(memes => {
+        await api.getAllImages().then(images => {
             this.setState({
-                memes: memes.data.data,
+                images: images.data.data,
             })
         })
     }
 
     render() {
-        const { memes } = this.state
+        const { images } = this.state
 
         const columns = [
             {
@@ -348,7 +349,7 @@ class MemesList extends Component {
         ]
 
         let showTable = true
-        if (!memes.length) {
+        if (!images.length) {
             showTable = false
         }
 
@@ -358,7 +359,7 @@ class MemesList extends Component {
                 {showTable && (
                     <Table
                         columns={columns}
-                        data={memes}
+                        data={images}
                     />
                 )}
             </Wrapper>
@@ -366,4 +367,4 @@ class MemesList extends Component {
     }
 }
 
-export default MemesList
+export default ImagesList

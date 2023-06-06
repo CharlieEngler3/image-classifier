@@ -4,24 +4,24 @@ const api = axios.create({
     baseURL: 'http://localhost:3000/api',
 })
 
-export const insertMeme = payload => api.post(`/meme`, payload)
+export const insertImage = payload => api.post(`/image`, payload)
 export const saveFile = payload => api.post(`/file`, payload)
-export const getAllMemes = () => api.get(`/memes`)
+export const getAllImages = () => api.get(`/images`)
 export const getAllFiles = () => api.get(`/files`)
-export const searchMeme = (term, mode) => api.post(`/meme/search/${term}/${mode}`)
-export const updateMemeById = (id, payload) => api.put(`/meme/update/${id}`, payload)
-export const deleteMemeById = (id, name) => api.delete(`/meme/${id}/${name}`)
-export const getMemeById = id => api.get(`/meme/${id}`)
+export const searchImage = (term, mode) => api.post(`/image/search/${term}/${mode}`)
+export const updateImageById = (id, payload) => api.put(`/image/update/${id}`, payload)
+export const deleteImageById = (id, name) => api.delete(`/image/${id}/${name}`)
+export const getImageById = id => api.get(`/image/${id}`)
 
 const apis = {
-    insertMeme,
+    insertImage,
     saveFile,
-    getAllMemes,
+    getAllImages,
     getAllFiles,
-    searchMeme,
-    updateMemeById,
-    deleteMemeById,
-    getMemeById,
+    searchImage,
+    updateImageById,
+    deleteImageById,
+    getImageById,
 }
 
 export default apis
