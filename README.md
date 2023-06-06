@@ -18,17 +18,17 @@ This is pretty easy to set up, so it shouldn't be too much of a hassle to get ru
     /client
     /server
     
-  2.) Open two command prompts, one within the client folder and one within the server folder and execute the following command within each
+  2.) Open two command prompts, one within the client folder and one within the server folder and execute the following command within each:
   
     npm install
   
-  3.) Once the npm packages are done installing in both, execute the following command within the server command prompt
+  3.) Once the npm packages are done installing in both, execute either of the following commands within the server command prompt:
   
     nodemon index.js
     -or-
     node index.js
     
-  4.) Then execute the following command within the client command prompt
+  4.) Then execute the following command within the client command prompt:
   
     npm run start
     
