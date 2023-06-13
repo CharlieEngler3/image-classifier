@@ -21,6 +21,8 @@ This is pretty easy to set up, so it shouldn't be too much of a hassle to get ru
   2.) Open two command prompts, one within the client folder and one within the server folder and execute the following command within each:
   
     npm install
+    [If npm install doesn't work, use the following command]
+    npm install --save --legacy-peer-deps
   
   3.) Once the npm packages are done installing in both, execute either of the following commands within the server command prompt:
   
@@ -33,6 +35,12 @@ This is pretty easy to set up, so it shouldn't be too much of a hassle to get ru
     npm run start
     
   5.) A browser window should open after step 4 and the app will be up and running at this point
+  
+## Images
+   ![Image Classifier Home](https://i.imgur.com/hZ6Rnb8.png)
+   ![Image Classifier Home Maximized](https://i.imgur.com/GO4PO1H.png)
+   ![Image Classifier Add](https://i.imgur.com/MS3svO5.png)
+   ![Image Classifier Update](https://i.imgur.com/BeufTE1.png)
   
 ## Authors
 
