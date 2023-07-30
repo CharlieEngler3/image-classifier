@@ -1,6 +1,6 @@
 # Image Classifier
 
-Before working on this image classifier, I had only used PHP for web development, so I wanted to learn a more modern technology. I chose the MERN stack because it was the first thing that was suggested to me. I didn't finish this, so many of the features that seem to be there either aren't implemented or aren't working.
+Before working on this image classifier, I had only used PHP for web development, so I wanted to learn a more modern technology. I chose the MERN stack because it was the first thing that was suggested to me.
 
 ## Getting Started
 
